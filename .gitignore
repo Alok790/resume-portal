@@ -1,0 +1,63 @@
+# -- Dependencies --------------------------------------------------------------
+node_modules/
+frontend/node_modules/
+
+# -- Build output --------------------------------------------------------------
+frontend/dist/
+backend/target/
+
+# -- Secret / config files (NEVER commit these) --------------------------------
+.env
+.env.local
+.env.production
+frontend/.env
+frontend/.env.local
+backend/src/main/resources/application.properties
+backend/src/main/resources/application-local.properties
+
+# -- Local data & uploads ------------------------------------------------------
+backend/uploads/
+backend/data/
+*.mv.db
+*.lock.db
+
+# -- Logs ----------------------------------------------------------------------
+*.log
+logs/
+ai-service/flask.log
+ai-service/flask-err.log
+frontend/vite.log
+
+# -- Bob internal files --------------------------------------------------------
+.bob/
+*.bob
+
+# -- Images / preview artifacts -----------------------------------------------
+img_*.png
+img_*.jpg
+resume-portal-app-preview.html
+deployment-plan.md
+
+# -- Java ----------------------------------------------------------------------
+*.class
+*.jar
+*.war
+
+# -- Python --------------------------------------------------------------------
+__pycache__/
+*.pyc
+*.pyo
+
+# -- IDE -----------------------------------------------------------------------
+.idea/
+*.iml
+.vscode/
+*.suo
+*.user
+
+# -- OS ------------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+
+# -- Lock files (not needed for deployment) ------------------------------------
+frontend/package-lock.json

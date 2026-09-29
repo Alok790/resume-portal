@@ -1,0 +1,33 @@
+# Copy this file to application.properties and fill in your values for local dev
+
+# H2 local database
+spring.datasource.url=jdbc:h2:file:./data/resume_portal;DB_CLOSE_DELAY=-1;MODE=MySQL;AUTO_SERVER=TRUE
+spring.datasource.username=sa
+spring.datasource.password=
+spring.datasource.driver-class-name=org.h2.Driver
+spring.h2.console.enabled=true
+spring.h2.console.path=/h2-console
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect
+spring.jpa.open-in-view=false
+
+# JWT - change this secret
+jwt.secret=your-local-dev-secret-key-at-least-32-chars
+jwt.expiration=86400000
+
+# File upload
+upload.path=./uploads
+spring.servlet.multipart.max-file-size=10MB
+spring.servlet.multipart.max-request-size=10MB
+
+# Async thread pool
+async.pool.core-size=2
+async.pool.max-size=10
+async.pool.queue-capacity=500
+
+# AI service
+ai.service.url=http://localhost:5001
+
+# Google OAuth - get from console.cloud.google.com
+google.client.id=YOUR_GOOGLE_CLIENT_ID_HERE
