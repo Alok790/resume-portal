@@ -7,7 +7,8 @@ RUN apk add --no-cache maven && mvn clean package -DskipTests -q
 FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
-RUN mkdir -p /app/uploads
+COPY entrypoint.sh entrypoint.sh
+RUN chmod +x entrypoint.sh && mkdir -p /app/uploads
 EXPOSE 8080
 ENV SPRING_PROFILES_ACTIVE=prod
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["sh", "entrypoint.sh"]
