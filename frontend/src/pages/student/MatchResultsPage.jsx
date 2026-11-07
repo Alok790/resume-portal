@@ -4,14 +4,41 @@ import Navbar from '../../components/Navbar'
 import MatchCard from '../../components/MatchCard'
 import api from '../../api/axios'
 
+const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === 'true'
+
 export default function MatchResultsPage() {
   const { resumeId } = useParams()
   const [matches, setMatches] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [demoApplications, setDemoApplications] = useState(() => {
+    if (!DEMO_MODE) return []
+    try {
+      const saved = JSON.parse(localStorage.getItem('demo_job_applications') || '[]')
+      return Array.isArray(saved) ? saved : []
+    } catch {
+      return []
+    }
+  })
+
+  const handleDemoApply = (match) => {
+    const application = {
+      jobId: match.jobId,
+      jobTitle: match.jobTitle,
+      company: match.company,
+      appliedAt: new Date().toISOString(),
+    }
+    const nextApplications = [
+      ...demoApplications.filter((item) => item.jobId !== match.jobId),
+      application,
+    ]
+    localStorage.setItem('demo_job_applications', JSON.stringify(nextApplications))
+    setDemoApplications(nextApplications)
+  }
 
   useEffect(() => {
-    api.get(`/match/my?resumeId=${resumeId}`)
+    const endpoint = DEMO_MODE ? '/demo/match/my' : '/match/my'
+    api.get(`${endpoint}?resumeId=${resumeId}`)
       .then(res => setMatches(res.data))
       .catch(() => setError('Could not load matches.'))
       .finally(() => setLoading(false))
@@ -27,6 +54,12 @@ export default function MatchResultsPage() {
           <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">Job Match Results</h2>
         </div>
 
+        {DEMO_MODE && (
+          <div className="mb-5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-900/60 dark:bg-amber-950/30 dark:text-amber-200">
+            Demo job postings are sample data. Apply buttons simulate the application flow locally; no application is sent to an employer.
+          </div>
+        )}
+
         {loading ? (
           <p className="text-gray-400 text-sm">Loading matches…</p>
         ) : error ? (
@@ -38,7 +71,9 @@ export default function MatchResultsPage() {
           </div>
         ) : (
           <div className="space-y-4">
-            <p className="text-sm text-gray-500 dark:text-gray-400">{matches.length} jobs found — sorted by match %</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              {matches.length} {DEMO_MODE ? 'sample job matches' : 'jobs found'} — sorted by match %
+            </p>
             {matches.map(match => (
               <MatchCard
                 key={match.matchId}
@@ -47,6 +82,17 @@ export default function MatchResultsPage() {
                 matchPercentage={match.matchPercentage}
                 missingSkills={match.missingSkills}
                 requiredSkills={match.requiredSkills}
+                matchedSkills={match.matchedSkills}
+                similarSkills={match.similarSkills}
+                company={match.company}
+                location={match.location}
+                salary={match.salary}
+                experienceLevel={match.experienceLevel}
+                learningRecommended={match.learningRecommended}
+                learningRecommendations={match.learningRecommendations}
+                demoMode={DEMO_MODE}
+                demoApplied={demoApplications.some((application) => application.jobId === match.jobId)}
+                onDemoApply={() => handleDemoApply(match)}
               />
             ))}
           </div>

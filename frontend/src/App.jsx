@@ -5,6 +5,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
+import HomePage from './pages/HomePage'
 
 // Student pages
 import StudentDashboard from './pages/student/StudentDashboard'
@@ -26,7 +27,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           {/* Public */}
-          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
 

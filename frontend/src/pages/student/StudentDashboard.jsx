@@ -4,6 +4,8 @@ import Navbar from '../../components/Navbar'
 import { useAuth } from '../../context/AuthContext'
 import api from '../../api/axios'
 
+const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === 'true'
+
 export default function StudentDashboard() {
   const [resumes, setResumes] = useState([])
   const [matching, setMatching] = useState({})
@@ -41,7 +43,8 @@ export default function StudentDashboard() {
   const handleFindMatches = async (resumeId) => {
     setMatching(prev => ({ ...prev, [resumeId]: true }))
     try {
-      await api.post(`/match/run?resumeId=${resumeId}`)
+      const endpoint = DEMO_MODE ? '/demo/match/run' : '/match/run'
+      await api.post(`${endpoint}?resumeId=${resumeId}`)
       navigate(`/student/matches/${resumeId}`)
     } catch (err) {
       alert(err.response?.data?.message || 'Matching failed. Ensure resume is processed.')
@@ -154,7 +157,9 @@ export default function StudentDashboard() {
                             disabled={matching[resume.id]}
                             className="text-sm bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 disabled:opacity-50 transition-colors font-medium"
                           >
-                            {matching[resume.id] ? '⏳ Matching…' : '🔍 Find Matches'}
+                            {matching[resume.id]
+                              ? '⏳ Matching…'
+                              : '🔍 Find Matches'}
                           </button>
                           <Link
                             to={`/student/analysis/${resume.id}`}
@@ -194,7 +199,10 @@ export default function StudentDashboard() {
           <div className="mt-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-2xl p-5">
             <p className="text-sm font-semibold text-blue-700 dark:text-blue-300 mb-2">💡 How matching works</p>
             <p className="text-xs text-blue-600 dark:text-blue-400">
-              Click <strong>Find Matches</strong> on any processed resume. Our AI compares your skills against all posted jobs using TF-IDF cosine similarity and ranks them by match percentage.
+              Click <strong>Find Matches</strong> on any processed resume.
+              {DEMO_MODE
+                ? ' Your skills are compared with the seeded demo openings; nearby skill matches are ranked too.'
+                : ' Our AI compares your skills against all posted jobs using TF-IDF cosine similarity and ranks them by match percentage.'}
             </p>
           </div>
         )}
